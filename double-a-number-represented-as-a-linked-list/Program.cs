@@ -9,32 +9,34 @@ public class ListNode {
 }
 
 public class Solution {
-    public ListNode DoubleLinkedList(ListNode head) {
-        // Initialize the current node as the head and carry as 0
-        ListNode current = head;
-        int carry = 0;
-        
-        // Iterate through the list
-        while (current != null) {
-            // Double the value of the current node and add the carry from the previous iteration
-            int newVal = current.val * 2 + carry;
-            
-            // Calculate the new value of the current node and the carry for the next iteration
-            current.val = newVal % 10;
-            carry = newVal / 10;
-            
-            // Move to the next node
-            if (current.next == null && carry > 0) {
-                // If we reach the end of the list and there is still a carry, add a new node
-                current.next = new ListNode(carry);
-                carry = 0; // Reset carry since it is now added to the list
-            }
-            
-            // Move to the next node
-            current = current.next;
+    // Method to double each node's value and handle carry-over recursively
+    private int DoubleNodeValues(ListNode head) {
+        // Base case: if head is null, return 0
+        if (head == null) {
+            return 0;
         }
         
-        // Return the head of the list
+        // Calculate the doubled value of the current node plus carry from the next nodes
+        int doubledValue = head.val * 2 + DoubleNodeValues(head.next);
+        
+        // Update the current node's value with the unit digit of the result
+        head.val = doubledValue % 10;
+        
+        // Return the carry (tens digit of the result)
+        return doubledValue / 10;
+    }
+    
+    // Method to double the linked list and handle carry
+    public ListNode DoubleLinkedList(ListNode head) {
+        // Calculate carry from doubling the linked list
+        int carry = DoubleNodeValues(head);
+        
+        // If there is carry left, insert a new node at the beginning with the carry value
+        if (carry > 0) {
+            head = new ListNode(carry, head);
+        }
+        
+        // Return the updated head of the linked list
         return head;
     }
 }
